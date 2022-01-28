@@ -8,6 +8,7 @@ import sklearn as sk
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
+import sqlite3
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -64,53 +65,48 @@ def ask():
 # File uploads and interfacing with complex Python
 # basic version
 
-@app.route('/submit-basic/', methods=['POST', 'GET'])
-def submit_basic():
-    if request.method == 'GET':
-        return render_template('submit-basic.html')
-    else:
-        try:
-            return render_template('submit-basic.html', thanks = True)
-        except:
-            return render_template('submit-basic.html', error=True)
-
-# nontrivial version: makes a prediction and shows a viz
-@app.route('/submit-advanced/', methods=['POST', 'GET'])
+@app.route('/submit/', methods=['POST', 'GET'])
 def submit():
     if request.method == 'GET':
         return render_template('submit.html')
     else:
         try:
-            # retrieve the image
-            img = request.files['image']
-            img = np.loadtxt(img)
-            
-            # reshape into appropriate format for prediction
-            x = img.reshape(1, 64)
-            
-            # load up a pre-trained model and get a prediction
-            model = pickle.load(open("mnist-model/model.pkl", 'rb'))
-            d = model.predict(x)[0]
-
-            # plot the image itself
-            fig = Figure(figsize = (3, 3))
-            ax = fig.add_subplot(1, 1, 1,)
-            ax.imshow(img, cmap = "binary")
-            ax.axis("off")
-            
-            # in order to show the plot on flask, we need to do a few tricks
-            # Convert plot to PNG image
-            # need to: 
-            # import io 
-            # import base64 
-            pngImage = io.BytesIO()
-            FigureCanvas(fig).print_png(pngImage)
-            
-            # Encode PNG image to base64 string
-            pngImageB64String = "data:image/png;base64,"
-            pngImageB64String += base64.b64encode(pngImage.getvalue()).decode('utf8')
-            
-            # finally we can render the template with the prediction and image
-            return render_template('submit.html', digit=d, image=pngImageB64String)
+            insert_message(request)
+            return render_template('submit.html', thanks=True)
         except:
             return render_template('submit.html', error=True)
+
+def get_message_db():
+    try:
+        return g.message_db
+    except:
+        g.message_db = sqlite3.connect("messages_db.sqlite")
+        cmd = \
+        '''
+        CREATE TABLE IF NOT EXISTS `messages` (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            handle TEXT NOT NULL,
+            message TEXT NOT NULL
+        );
+        '''
+
+        cursor = g.message_db.cursor()
+        cursor.execute(cmd)
+        return g.message_db
+
+def insert_message(request):
+    conn = get_message_db()
+    cmd = \
+    f'''
+    INSERT INTO messages (handle, message)
+        VALUES ('{request.handle}', '{request.message}'); 
+    '''
+
+    cursor = conn.cursor()
+    cursor.execute(cmd)
+    conn.commit()
+    conn.close()
+
+
+
+

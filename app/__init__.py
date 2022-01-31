@@ -10,8 +10,6 @@ import pickle
 import sqlite3
 
 
-import io
-import base64
 
 
 # Create web app, run with flask run
@@ -19,15 +17,9 @@ import base64
 
 app = Flask(__name__)
 
-# Create main page (fancy)
+# Create main page
 
 @app.route('/')
-
-# def main():
-#     return render_template("main.html")
-
-# comment out the below to focus on just the fundamentals
-
 # after running
 # $ export FLASK_ENV=development; flask run
 # site will be available at 
@@ -37,21 +29,7 @@ def main():
     # return render_template('main_better.html')
     return render_template('main.html')
 
-# Show url matching
-
-# @app.route('/hello/')
-# def hello():
-#     return render_template('hello.html')
-#
-# @app.route('/hello/<name>/')
-# def hello_name(name):
-#     return render_template('hello.html', name=name)
-
-
-
-# File uploads and interfacing with complex Python
-# basic version
-
+#submit page
 @app.route('/submit/', methods=['POST', 'GET'])
 def submit():
     if request.method == 'GET':
@@ -98,11 +76,6 @@ def insert_message(request):
 @app.route('/view/')
 def view():
     return render_template('view.html', messages = random_messages(5))
-
-# @app.route('/hello/<name>/')
-# def hello_name(name):
-#     return render_template('hello.html', name=name)
-
 
 def random_messages(n):
     conn = get_message_db()

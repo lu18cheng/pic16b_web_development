@@ -1,6 +1,6 @@
 html {
-    font-family: sans-serif;
-    background: AntiqueWhite;
+    font-family: Arial;
+    background: LightGrey;
     padding: 1rem;
 }
 
@@ -17,7 +17,7 @@ h1 {
 }
 
 a {
-    color: CornflowerBlue;
+    color: Black;
     text-decoration: none;
 }
 
@@ -27,7 +27,7 @@ hr {
 }
 
 nav {
-    background: AntiqueWhite;
+    background: LightGrey;
     padding: 0 0.5rem;
     border-radius: 25px;
 }
@@ -46,8 +46,10 @@ nav ul li a {
 
 .content {
     padding: 0 1rem 1rem;
-    background: white;
-    border-radius: 25px;
+    color: MidnightBlue;
+    font-style: italic;
+    background: LightBlue;
+    border-radius: 15px;
 }
 
 .flash {

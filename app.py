@@ -80,14 +80,24 @@ def view():
 def random_messages(n):
     conn = get_message_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT MAX(id) FROM messages")
-    max_id = cursor.fetchone()[0]
-    if n <= max_id:
-        rand_ids = tuple(np.random.choice(range(1, max_id+1), n, replace=False))
-        cursor.execute(f"SELECT handle, message FROM messages WHERE id IN {rand_ids}")
-    else:
-        rand_ids = tuple(np.random.choice(range(1, max_id+1), max_id, replace=False))
-        cursor.execute(f"SELECT handle, message FROM messages WHERE id IN {rand_ids}")
+    cursor.execute(f"SELECT handle, message FROM messages ORDER BY RANDOM() LIMIT {n}")
+    # cursor.execute("SELECT MAX(id) FROM messages")
+    # max_id = cursor.fetchone()[0]
+    #
+    #
+    # if max_id <= 1:
+    #     cursor.execute(f"SELECT handle, message FROM messages WHERE id=max_id")
+    # else:
+    #     ids = np.arange(1, max_id + 1)
+    #     np.random.shuffle(ids)
+    #     rand_ids = tuple(ids[:n])
+    #     cursor.execute(f"SELECT handle, message FROM messages WHERE id IN {rand_ids}")
+    # # elif n <= max_id:
+    # #     rand_ids = tuple(np.random.choice(np.arange(1, max_id+1), n, replace=False))
+    # #     cursor.execute(f"SELECT handle, message FROM messages WHERE id IN {rand_ids}")
+    # # else:
+    # #     rand_ids = tuple(np.random.choice(np.arange(1, max_id+1), max_id, replace=False))
+    # #     cursor.execute(f"SELECT handle, message FROM messages WHERE id IN {rand_ids}")
     msg = cursor.fetchall()
     return msg
 

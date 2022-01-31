@@ -99,7 +99,7 @@ def insert_message(request):
     cmd = \
     f'''
     INSERT INTO messages (handle, message)
-        VALUES ('{request.handle}', '{request.message}'); 
+        VALUES ('{request.form["handle"]}', '{request.form["message"]}'); 
     '''
 
     cursor = conn.cursor()
@@ -108,5 +108,6 @@ def insert_message(request):
     conn.close()
 
 
+# 
 
 

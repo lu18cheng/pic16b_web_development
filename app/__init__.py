@@ -4,14 +4,11 @@
 
 from flask import Flask, g, render_template, request
 
-import sklearn as sk
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import sqlite3
 
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 import io
 import base64
@@ -42,13 +39,13 @@ def main():
 
 # Show url matching
 
-@app.route('/hello/')
-def hello():
-    return render_template('hello.html')
-
-@app.route('/hello/<name>/')
-def hello_name(name):
-    return render_template('hello.html', name=name)
+# @app.route('/hello/')
+# def hello():
+#     return render_template('hello.html')
+#
+# @app.route('/hello/<name>/')
+# def hello_name(name):
+#     return render_template('hello.html', name=name)
 
 # Page with form
 
@@ -108,6 +105,29 @@ def insert_message(request):
     conn.close()
 
 
-# 
+@app.route('/view/')
+def view():
+    return render_template('view.html', messages = random_messages(5))
+
+# @app.route('/hello/<name>/')
+# def hello_name(name):
+#     return render_template('hello.html', name=name)
+
+
+def random_messages(n):
+    conn = get_message_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT MAX(id) FROM messages")
+    max_id = cursor.fetchone()[0]
+    if n <= max_id:
+        rand_ids = tuple(np.random.choice(range(1, max_id+1), n, replace=False))
+        cursor.execute(f"SELECT handle, message FROM messages WHERE id IN {rand_ids}")
+    else:
+        rand_ids = tuple(np.random.choice(range(1, max_id+1), max_id, replace=False))
+        cursor.execute(f"SELECT handle, message FROM messages WHERE id IN {rand_ids}")
+    msg = cursor.fetchall()
+    return msg
+
+
 
 

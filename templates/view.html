@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
 
-
-
 {% block header %}
   <h1>{% block title %}View Some Cool Messages{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-
 <ol>
 {% for msg in messages %}
     <br>
@@ -16,5 +13,4 @@
     <br>
 {% endfor %}
 </ol>
-
 {% endblock %}
